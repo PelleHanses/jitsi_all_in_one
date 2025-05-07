@@ -1,6 +1,9 @@
 # jitsi_all_in_one
 Jitsi all in one
 
+## Alla moduler runt Jitsi
+```docker compose up -d```
+
 ## Jitsi
 ```mkdir jitsi
 cd jitsi```
