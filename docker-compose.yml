@@ -14,6 +14,8 @@ services:
       - ./haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
       - ./haproxy/certs:/usr/local/etc/haproxy/certs:ro
     restart: unless-stopped
+    networks:
+      meet.jitsi:
 
   # === Certbot for Let's Encrypt ===
   certbot:
@@ -24,6 +26,8 @@ services:
       - ./haproxy/webroot:/var/www/certbot
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do sleep 12h & wait $${!}; certbot renew --webroot -w /var/www/certbot --quiet; done'"
     restart: unless-stopped
+    networks:
+      meet.jitsi:
 
   # === HAProxy Web Interface ===
   haproxy-wi:
@@ -37,6 +41,8 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=secret
     restart: unless-stopped
+    networks:
+      meet.jitsi:
 
   # === Coturn (TURN server) ===
   turn:
@@ -48,6 +54,8 @@ services:
     volumes:
       - ./coturn/turnserver.conf:/etc/coturn/turnserver.conf
     restart: unless-stopped
+    networks:
+      meet.jitsi:
 
   # === Keycloak (OIDC Provider) ===
   keycloak:
@@ -62,6 +70,8 @@ services:
     volumes:
       - ./keycloak/data:/opt/keycloak/data
     restart: unless-stopped
+    networks:
+      meet.jitsi:
 
   # === Prometheus ===
   prometheus:
@@ -73,6 +83,8 @@ services:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
       - ./prometheus/data:/prometheus
     restart: unless-stopped
+    networks:
+      meet.jitsi:
 
   # === Grafana ===
   grafana:
@@ -87,6 +99,8 @@ services:
     depends_on:
       - prometheus
     restart: unless-stopped
+    networks:
+      meet.jitsi:
 
   # === Node exporter ===
   node-exporter:
@@ -100,7 +114,9 @@ services:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
       - /:/rootfs:ro
-
+    networks:
+      meet.jitsi:
+      
   # === Apache PHP Server ===
   apache-php:
     image: php:8.2-apache
@@ -111,7 +127,12 @@ services:
       - ./apache-php/html:/var/www/html
       - ./apache-php/custom.ini:/usr/local/etc/php/conf.d/custom.ini
     restart: unless-stopped
+    networks:
+      meet.jitsi:
 
 volumes:
   # define if you want named volumes instead of bind mounts
   # e.g. grafana-data:
+
+networks:
+  meet.jitsi:
